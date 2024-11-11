@@ -1,0 +1,45 @@
+db.students.insertOne({
+  name: "Ravi",
+  age: 19,
+  grade: "First Year",
+  city: "Delhi"
+});
+
+db.students.insertMany([
+  {
+    name: "Aarti",
+    age: 21,
+    grade: "Second Year",
+    city: "Mumbai"
+  },
+  {
+    name: "Vikram",
+    age: 22,
+    grade: "Third Year",
+    city: "Bengaluru"
+  },
+  {
+    name: "Priya",
+    age: 20,
+    grade: "First Year",
+    city: "Ahmedabad"
+  }
+]);
+
+db.students.find().pretty();
+db.students.findOne({ name: "Ravi" });
+db.students.find({ age: { $gt: 18 } }).sort({ age: 1 });
+
+db.students.updateOne(
+  { name: "Ravi" },
+  { $set: { grade: "Second Year" } }
+);
+
+db.students.updateOne(
+  { name: "Aarti" },
+  { $inc: { age: 1 } }
+);
+
+db.students.deleteOne({ name: "Vikram" });
+
+db.students.deleteMany({ age: { $gt: 21 } });
