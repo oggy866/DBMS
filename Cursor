@@ -1,0 +1,74 @@
+CREATE TABLE N_RollCall (
+    RollCall_ID INT PRIMARY KEY,
+    Date DATE,
+    Attendance VARCHAR(20),
+    Student_ID INT,
+    Teacher_ID INT
+);
+
+CREATE TABLE O_RollCall (
+    RollCall_ID INT PRIMARY KEY,
+    Date DATE,
+    Attendance VARCHAR(20),
+    Student_ID INT,
+    Teacher_ID INT
+);
+
+INSERT INTO N_RollCall VALUES 
+(1, '2023-01-01', 'Present', 101, 201),
+(2, '2023-01-02', 'Absent', 102, 202),
+(3, '2023-01-03', 'Present', 103, 203);
+
+INSERT INTO O_RollCall VALUES 
+(1, '2023-01-01', 'Present', 101, 201),
+(2, '2023-01-02', 'Present', 102, 202);
+
+DELIMITER //
+
+CREATE PROCEDURE merge_roll_call_data()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE n_rollcall_id INT;
+    DECLARE n_date DATE;
+    DECLARE n_attendance VARCHAR(20);
+    DECLARE n_student_id INT;
+    DECLARE n_teacher_id INT;
+    DECLARE v_exists INT DEFAULT 0;
+
+    DECLARE cur_n_rollcall CURSOR FOR
+        SELECT RollCall_ID, Date, Attendance, Student_ID, Teacher_ID
+        FROM N_RollCall;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN cur_n_rollcall;
+
+    read_loop: LOOP
+        FETCH cur_n_rollcall INTO n_rollcall_id, n_date, n_attendance, n_student_id, n_teacher_id;
+
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        SELECT COUNT(*) INTO v_exists
+        FROM O_RollCall
+        WHERE RollCall_ID = n_rollcall_id 
+        AND Date = n_date 
+        AND Student_ID = n_student_id 
+        AND Teacher_ID = n_teacher_id;
+
+        IF v_exists = 0 THEN
+            INSERT INTO O_RollCall (RollCall_ID, Date, Attendance, Student_ID, Teacher_ID)
+            VALUES (n_rollcall_id, n_date, n_attendance, n_student_id, n_teacher_id);
+        END IF;
+    END LOOP;
+
+    CLOSE cur_n_rollcall;
+
+END //
+
+DELIMITER ;
+
+CALL merge_roll_call_data();
+
+SELECT * FROM O_RollCall;
