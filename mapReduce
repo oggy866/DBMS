@@ -1,0 +1,21 @@
+db.createCollection("fruits");
+db.fruits.insertMany([
+  { id: 1, name: "Apple", qty: 100 },
+  { id: 2, name: "Banana", qty: 150 },
+  { id: 3, name: "Orange", qty: 200 },
+  { id: 4, name: "Apple", qty: 129 },
+  { id: 5, name: "Banana", qty: 120 },
+  { id: 6, name: "Orange", qty: 220 },
+  { id: 7, name: "Apple", qty: 104 },
+  { id: 8, name: "Banana", qty: 180 },
+  { id: 9, name: "Orange", qty: 300 }
+]);
+db.fruits.find();
+var map = function() {
+  emit(this.name, this.qty);
+};
+var reduce = function(name, qty) {
+  return Array.sum(qty);
+};
+db.fruits.mapReduce(map, reduce, { out: "allFruitsQty" });
+db.allFruitsQty.find();
