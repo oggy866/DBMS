@@ -1,0 +1,57 @@
+db.students.insertOne({
+    name: "Ravi", 
+    age: 19, 
+    grade: "First Year", 
+    city: "Delhi"
+});
+db.students.insertMany([
+    { name: "Aarti", age: 21, grade: "Second Year", city: "Mumbai" },
+    { name: "Vikram", age: 22, grade: "Third Year", city: "Bengaluru" },
+    { name: "Priya", age: 20, grade: "First Year", city: "Ahmedabad" }
+]);
+db.students.find().pretty();
+db.students.findOne({ name: "Ravi" });
+db.students.find({ age: { $gt: 18 } }).sort({ age: 1 });
+db.students.updateOne(
+    { name: "Ravi" },
+    { $set: { grade: "Second Year" } }
+);
+db.students.updateOne(
+    { name: "Aarti" },
+    { $inc: { age: 1 } }
+);
+db.students.find({
+    $and: [
+        { age: { $gt: 18 } },
+        { grade: "First Year" }
+    ]
+}).pretty();
+db.students.find({
+    age: { $not: { $lt: 20 } }
+}).pretty();
+db.students.save({
+    name: "Priya", 
+    age: 20, 
+    grade: "First Year", 
+    city: "Ahmedabad"
+});
+db.students.find({
+    $nor: [
+        { grade: "First Year" },
+        { age: { $gt: 21 } }
+    ]
+}).pretty();
+db.students.find({
+    grade: { $not: { $eq: "First Year" } }
+}).pretty();
+db.students.find({
+    grade: { $in: ["First Year", "Second Year"] }
+}).pretty();
+db.students.find({
+    grade: { $nin: ["First Year", "Second Year"] }
+}).pretty();
+db.students.find({ age: { $eq: 21 } }).pretty();
+db.students.find({ age: { $gt: 20 } }).pretty();
+db.students.find({ age: { $gte: 20 } }).pretty();
+db.students.find({ age: { $lt: 21 } }).pretty();
+db.students.find({ age: { $lte: 21 } }).pretty();
